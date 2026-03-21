@@ -3,8 +3,10 @@ import {
   View, Text, StyleSheet, TextInput,
   TouchableOpacity
 } from 'react-native';
+import { useTheme } from '../theme/ThemeContext';
 
 export default function HummelInstructionsScreen({ navigation }) {
+  const { theme } = useTheme();
   const [input, setInput] = useState('');
 
   const handleSend = () => {
@@ -13,39 +15,46 @@ export default function HummelInstructionsScreen({ navigation }) {
   };
 
   return (
-    <View style={styles.container}>
-      {/* Header */}
+    <View style={[styles.container, { backgroundColor: theme.background }]}>
       <View style={styles.header}>
-        <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-          <Text style={styles.backText}>‹</Text>
+        <TouchableOpacity
+          style={[styles.backButton, { backgroundColor: theme.card }]}
+          onPress={() => navigation.goBack()}
+        >
+          <Text style={[styles.backText, { color: theme.text }]}>‹</Text>
         </TouchableOpacity>
         <TouchableOpacity>
-          <Text style={styles.menuDots}>•••</Text>
+          <Text style={[styles.menuDots, { color: theme.text }]}>•••</Text>
         </TouchableOpacity>
       </View>
 
-      {/* Center Content */}
       <View style={styles.centerContainer}>
-        <Text style={styles.title}>Hummel</Text>
-        <View style={styles.infoBox}>
-          <Text style={styles.infoText}>Remembers what user said{'\n'}earlier in the conversation</Text>
+        <Text style={[styles.title, { color: theme.text }]}>Hummel</Text>
+        <View style={[styles.infoBox, { backgroundColor: theme.card }]}>
+          <Text style={[styles.infoText, { color: theme.subText }]}>
+            Remembers what user said{'\n'}earlier in the conversation
+          </Text>
         </View>
-        <View style={styles.infoBox}>
-          <Text style={styles.infoText}>Allows user to provide{'\n'}follow-up corrections With AI</Text>
+        <View style={[styles.infoBox, { backgroundColor: theme.card }]}>
+          <Text style={[styles.infoText, { color: theme.subText }]}>
+            Allows user to provide{'\n'}follow-up corrections With AI
+          </Text>
         </View>
       </View>
 
-      {/* Input Bar */}
-      <View style={styles.inputContainer}>
+      <View style={[styles.inputContainer, { borderTopColor: theme.border }]}>
         <TextInput
-          style={styles.input}
+          style={[styles.input, { backgroundColor: theme.inputBg, color: theme.text }]}
           placeholder="Send a message"
-          placeholderTextColor="#aaa"
+          placeholderTextColor={theme.subText}
           value={input}
           onChangeText={setInput}
         />
-        <TouchableOpacity style={styles.sendButton} onPress={handleSend}>
-          <Text style={styles.sendText}>›</Text>
+        <TouchableOpacity
+          style={[styles.sendButton, { backgroundColor: theme.card }]}
+          onPress={handleSend}
+        >
+          <Text style={[styles.sendText, { color: theme.text }]}>›</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -53,10 +62,7 @@ export default function HummelInstructionsScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#ffffff',
-  },
+  container: { flex: 1 },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -66,76 +72,29 @@ const styles = StyleSheet.create({
     paddingBottom: 16,
   },
   backButton: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: '#f0f0f0',
-    alignItems: 'center',
-    justifyContent: 'center',
+    width: 36, height: 36, borderRadius: 18,
+    alignItems: 'center', justifyContent: 'center',
   },
-  backText: {
-    fontSize: 24,
-    color: '#000000',
-  },
-  menuDots: {
-    fontSize: 16,
-    color: '#000000',
-    letterSpacing: 2,
-  },
+  backText: { fontSize: 24 },
+  menuDots: { fontSize: 16, letterSpacing: 2 },
   centerContainer: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 24,
-    gap: 16,
+    flex: 1, alignItems: 'center',
+    justifyContent: 'center', paddingHorizontal: 24, gap: 16,
   },
-  title: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    color: '#000000',
-    marginBottom: 20,
-  },
-  infoBox: {
-    width: '100%',
-    backgroundColor: '#f5f5f5',
-    borderRadius: 12,
-    padding: 16,
-    alignItems: 'center',
-  },
-  infoText: {
-    fontSize: 14,
-    color: '#888888',
-    textAlign: 'center',
-    lineHeight: 22,
-  },
+  title: { fontSize: 32, fontWeight: 'bold', marginBottom: 20 },
+  infoBox: { width: '100%', borderRadius: 12, padding: 16, alignItems: 'center' },
+  infoText: { fontSize: 14, textAlign: 'center', lineHeight: 22 },
   inputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderTopWidth: 1,
-    borderTopColor: '#f0f0f0',
-    gap: 8,
+    flexDirection: 'row', alignItems: 'center',
+    paddingHorizontal: 16, paddingVertical: 12, borderTopWidth: 1, gap: 8,
   },
   input: {
-    flex: 1,
-    backgroundColor: '#f5f5f5',
-    borderRadius: 24,
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    fontSize: 15,
-    color: '#000000',
+    flex: 1, borderRadius: 24,
+    paddingHorizontal: 16, paddingVertical: 10, fontSize: 15,
   },
   sendButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: '#f0f0f0',
-    alignItems: 'center',
-    justifyContent: 'center',
+    width: 40, height: 40, borderRadius: 20,
+    alignItems: 'center', justifyContent: 'center',
   },
-  sendText: {
-    fontSize: 24,
-    color: '#000000',
-  },
+  sendText: { fontSize: 24 },
 });

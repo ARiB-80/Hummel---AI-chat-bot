@@ -1,50 +1,55 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
+import { useTheme } from '../theme/ThemeContext';
 
 export default function RegisterScreen({ navigation }) {
+  const { theme } = useTheme();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
   return (
-    <View style={styles.container}>
-      <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-        <Text style={styles.backText}>‹</Text>
+    <View style={[styles.container, { backgroundColor: theme.background }]}>
+      <TouchableOpacity
+        style={[styles.backButton, { backgroundColor: theme.card }]}
+        onPress={() => navigation.goBack()}
+      >
+        <Text style={[styles.backText, { color: theme.text }]}>‹</Text>
       </TouchableOpacity>
 
-      <Text style={styles.title}>Create your{'\n'}Account</Text>
+      <Text style={[styles.title, { color: theme.text }]}>Create your{'\n'}Account</Text>
 
       <View style={styles.form}>
-        <View style={styles.inputContainer}>
+        <View style={[styles.inputContainer, { backgroundColor: theme.card }]}>
           <Text style={styles.inputIcon}>👤</Text>
           <TextInput
-            style={styles.input}
+            style={[styles.input, { color: theme.text }]}
             placeholder="Full Name"
-            placeholderTextColor="#aaa"
+            placeholderTextColor={theme.subText}
             value={name}
             onChangeText={setName}
           />
         </View>
 
-        <View style={styles.inputContainer}>
+        <View style={[styles.inputContainer, { backgroundColor: theme.card }]}>
           <Text style={styles.inputIcon}>✉</Text>
           <TextInput
-            style={styles.input}
+            style={[styles.input, { color: theme.text }]}
             placeholder="Enter Your Email"
-            placeholderTextColor="#aaa"
+            placeholderTextColor={theme.subText}
             value={email}
             onChangeText={setEmail}
             keyboardType="email-address"
           />
         </View>
 
-        <View style={styles.inputContainer}>
+        <View style={[styles.inputContainer, { backgroundColor: theme.card }]}>
           <Text style={styles.inputIcon}>🔒</Text>
           <TextInput
-            style={styles.input}
+            style={[styles.input, { color: theme.text }]}
             placeholder="Password"
-            placeholderTextColor="#aaa"
+            placeholderTextColor={theme.subText}
             value={password}
             onChangeText={setPassword}
             secureTextEntry={!showPassword}
@@ -54,17 +59,17 @@ export default function RegisterScreen({ navigation }) {
           </TouchableOpacity>
         </View>
 
-         <TouchableOpacity 
-          style={styles.registerButton}
-           onPress={() => navigation.navigate('WelcomeHome')}
->
-         <Text style={styles.registerText}>Register</Text>
+        <TouchableOpacity
+          style={[styles.registerButton, { backgroundColor: theme.buttonBg }]}
+          onPress={() => navigation.navigate('WelcomeHome')}
+        >
+          <Text style={[styles.registerText, { color: theme.buttonText }]}>Register</Text>
         </TouchableOpacity>
 
         <View style={styles.loginRow}>
-          <Text style={styles.loginText}>Already Have An Account? </Text>
+          <Text style={[styles.loginText, { color: theme.subText }]}>Already Have An Account? </Text>
           <TouchableOpacity onPress={() => navigation.navigate('Login')}>
-            <Text style={styles.loginLink}>Sign In</Text>
+            <Text style={[styles.loginLink, { color: theme.text }]}>Sign In</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -73,76 +78,23 @@ export default function RegisterScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#f5f5f5',
-    paddingHorizontal: 24,
-    paddingTop: 60,
-  },
+  container: { flex: 1, paddingHorizontal: 24, paddingTop: 60 },
   backButton: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: '#ffffff',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 30,
+    width: 36, height: 36, borderRadius: 18,
+    alignItems: 'center', justifyContent: 'center', marginBottom: 30,
   },
-  backText: {
-    fontSize: 24,
-    color: '#000000',
-  },
-  title: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    color: '#000000',
-    marginBottom: 40,
-    lineHeight: 42,
-  },
-  form: {
-    gap: 16,
-  },
+  backText: { fontSize: 24 },
+  title: { fontSize: 32, fontWeight: 'bold', marginBottom: 40, lineHeight: 42 },
+  form: { gap: 16 },
   inputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#ffffff',
-    borderRadius: 12,
-    paddingHorizontal: 16,
-    paddingVertical: 14,
+    flexDirection: 'row', alignItems: 'center',
+    borderRadius: 12, paddingHorizontal: 16, paddingVertical: 14,
   },
-  inputIcon: {
-    fontSize: 16,
-    marginRight: 10,
-  },
-  input: {
-    flex: 1,
-    fontSize: 15,
-    color: '#000000',
-  },
-  registerButton: {
-    backgroundColor: '#000000',
-    paddingVertical: 16,
-    borderRadius: 50,
-    alignItems: 'center',
-    marginTop: 8,
-  },
-  registerText: {
-    color: '#ffffff',
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  loginRow: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    marginTop: 8,
-  },
-  loginText: {
-    color: '#888888',
-    fontSize: 14,
-  },
-  loginLink: {
-    color: '#000000',
-    fontSize: 14,
-    fontWeight: 'bold',
-  },
+  inputIcon: { fontSize: 16, marginRight: 10 },
+  input: { flex: 1, fontSize: 15 },
+  registerButton: { paddingVertical: 16, borderRadius: 50, alignItems: 'center', marginTop: 8 },
+  registerText: { fontSize: 16, fontWeight: '600' },
+  loginRow: { flexDirection: 'row', justifyContent: 'center', marginTop: 8 },
+  loginText: { fontSize: 14 },
+  loginLink: { fontSize: 14, fontWeight: 'bold' },
 });

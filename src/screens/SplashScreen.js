@@ -1,7 +1,10 @@
 import React, { useEffect } from 'react';
 import { View, Text, StyleSheet, Image } from 'react-native';
+import { useTheme } from '../theme/ThemeContext';
 
 export default function SplashScreen({ navigation }) {
+  const { theme } = useTheme();
+
   useEffect(() => {
     const timer = setTimeout(() => {
       navigation.replace('Onboarding');
@@ -10,7 +13,7 @@ export default function SplashScreen({ navigation }) {
   }, []);
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: theme.background }]}>
       <View style={styles.logoContainer}>
         <Image
           source={require('../../assets/icon.png')}
@@ -18,48 +21,27 @@ export default function SplashScreen({ navigation }) {
         />
       </View>
       <View style={styles.bottomContainer}>
-        <Text style={styles.appName}>Hummel</Text>
-        <Text style={styles.version}>Version 1.0</Text>
+        <Text style={[styles.appName, { color: theme.text }]}>Hummel</Text>
+        <Text style={[styles.version, { color: theme.subText }]}>Version 1.0</Text>
       </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#ffffff',
-  },
+  container: { flex: 1 },
   logoContainer: {
     position: 'absolute',
-    top: 1,
-    left: 1,
-    right: 1,
-    bottom: 1,
+    top: 0, left: 0, right: 0, bottom: 0,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  logo: {
-    width: 320,
-    height: 320,
-    resizeMode: 'contain',
-  },
+  logo: { width: 320, height: 320, resizeMode: 'contain' },
   bottomContainer: {
     position: 'absolute',
-    bottom: 50,
-    left: 0,
-    right: 0,
+    bottom: 50, left: 0, right: 0,
     alignItems: 'center',
   },
-  appName: {
-    fontSize: 26,
-    fontWeight: 'bold',
-    color: '#000000',
-    letterSpacing: -1,
-  },
-  version: {
-    fontSize: 14,
-    color: '#424040',
-    marginTop: 2,
-  },
+  appName: { fontSize: 26, fontWeight: 'bold', letterSpacing: -1 },
+  version: { fontSize: 14, marginTop: 2 },
 });
