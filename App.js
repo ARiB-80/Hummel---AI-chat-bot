@@ -5,6 +5,7 @@ import SplashScreen from './src/screens/SplashScreen';
 import OnboardingScreen from './src/screens/OnboardingScreen';
 import WelcomeScreen from './src/screens/WelcomeScreen';
 import RegisterScreen from './src/screens/RegisterScreen';
+import LoginScreen from './src/screens/LoginScreen';
 
 const Stack = createStackNavigator();
 
@@ -16,6 +17,7 @@ export default function App() {
         <Stack.Screen name="Onboarding" component={OnboardingScreen} />
         <Stack.Screen name="Welcome" component={WelcomeScreen} />
         <Stack.Screen name="Register" component={RegisterScreen} />
+        <Stack.Screen name="Login" component={LoginScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
