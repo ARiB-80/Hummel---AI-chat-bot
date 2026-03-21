@@ -54,8 +54,11 @@ export default function RegisterScreen({ navigation }) {
           </TouchableOpacity>
         </View>
 
-        <TouchableOpacity style={styles.registerButton}>
-          <Text style={styles.registerText}>Register</Text>
+         <TouchableOpacity 
+          style={styles.registerButton}
+           onPress={() => navigation.navigate('WelcomeHome')}
+>
+         <Text style={styles.registerText}>Register</Text>
         </TouchableOpacity>
 
         <View style={styles.loginRow}>
