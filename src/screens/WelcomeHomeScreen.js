@@ -18,7 +18,7 @@ export default function WelcomeHomeScreen({ navigation }) {
 
         <TouchableOpacity
           style={styles.getStartedButton}
-          onPress={() => navigation.navigate('Chat')}
+          onPress={() => navigation.navigate('HummelInstructions')}
         >
           <Text style={styles.getStartedText}>Get Started</Text>
         </TouchableOpacity>

@@ -1,10 +1,17 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
-  View, Text, StyleSheet,
-  TextInput, TouchableOpacity
+  View, Text, StyleSheet, TextInput,
+  TouchableOpacity
 } from 'react-native';
 
 export default function HummelInstructionsScreen({ navigation }) {
+  const [input, setInput] = useState('');
+
+  const handleSend = () => {
+    if (!input.trim()) return;
+    navigation.navigate('HummelChat', { initialMessage: input });
+  };
+
   return (
     <View style={styles.container}>
       {/* Header */}
@@ -34,12 +41,10 @@ export default function HummelInstructionsScreen({ navigation }) {
           style={styles.input}
           placeholder="Send a message"
           placeholderTextColor="#aaa"
-          onSubmitEditing={() => navigation.navigate('HummelChat')}
+          value={input}
+          onChangeText={setInput}
         />
-        <TouchableOpacity
-          style={styles.sendButton}
-          onPress={() => navigation.navigate('HummelChat')}
-        >
+        <TouchableOpacity style={styles.sendButton} onPress={handleSend}>
           <Text style={styles.sendText}>›</Text>
         </TouchableOpacity>
       </View>

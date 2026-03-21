@@ -1,55 +1,24 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   View, Text, StyleSheet, TextInput,
   TouchableOpacity, FlatList, KeyboardAvoidingView, Platform
 } from 'react-native';
 
-export default function HummelChatScreen({ navigation, route }) {
-  const [messages, setMessages] = useState([]);
+export default function HummelChatEditScreen({ navigation, route }) {
+  const initialMessage = route?.params?.message || 'Top 6 Movies With High Imdb';
+  const [messages, setMessages] = useState([
+    { id: '1', text: initialMessage, sender: 'user' },
+    { id: '2', text: 'As an AI, I don\'t have real-time access to IMDb\'s rankings, and my training only goes up until September 2021. However, I can provide you with a list of critically acclaimed movies that were highly rated at that time. Please note that opinions on the "best" movies can vary, and IMDb ratings may change over time. Here are ten highly regarded films as of September 2021.', sender: 'ai' },
+  ]);
+  const [editText, setEditText] = useState(initialMessage);
+  const [isEditing, setIsEditing] = useState(true);
   const [input, setInput] = useState('');
-  const [isGenerating, setIsGenerating] = useState(false);
 
-  useEffect(() => {
-    const initialMessage = route?.params?.initialMessage;
-    if (initialMessage) {
-      const userMessage = {
-        id: Date.now().toString(),
-        text: initialMessage,
-        sender: 'user'
-      };
-      setMessages([userMessage]);
-      setIsGenerating(true);
-      setTimeout(() => {
-        const aiMessage = {
-          id: (Date.now() + 1).toString(),
-          text: 'This is a placeholder response. API integration coming soon!',
-          sender: 'ai'
-        };
-        setMessages(prev => [...prev, aiMessage]);
-        setIsGenerating(false);
-      }, 1500);
-    }
-  }, []);
-
-  const sendMessage = () => {
-    if (!input.trim()) return;
-    const userMessage = {
-      id: Date.now().toString(),
-      text: input,
-      sender: 'user'
-    };
-    setMessages(prev => [...prev, userMessage]);
-    setInput('');
-    setIsGenerating(true);
-    setTimeout(() => {
-      const aiMessage = {
-        id: (Date.now() + 1).toString(),
-        text: 'This is a placeholder response. API integration coming soon!',
-        sender: 'ai'
-      };
-      setMessages(prev => [...prev, aiMessage]);
-      setIsGenerating(false);
-    }, 1500);
+  const handleSaveSubmit = () => {
+    setMessages(prev => prev.map(m =>
+      m.id === '1' ? { ...m, text: editText } : m
+    ));
+    setIsEditing(false);
   };
 
   return (
@@ -74,42 +43,40 @@ export default function HummelChatScreen({ navigation, route }) {
         style={styles.messagesList}
         contentContainerStyle={styles.messagesContent}
         renderItem={({ item }) => (
-          <View style={[
-            styles.messageBubble,
-            item.sender === 'user' ? styles.userBubble : styles.aiBubble
-          ]}>
-            <Text style={styles.messageText}>{item.text}</Text>
-          </View>
+          item.sender === 'user' && isEditing ? (
+            <View style={styles.editContainer}>
+              <TextInput
+                style={styles.editInput}
+                value={editText}
+                onChangeText={setEditText}
+                multiline
+              />
+              <View style={styles.editButtons}>
+                <TouchableOpacity style={styles.saveButton} onPress={handleSaveSubmit}>
+                  <Text style={styles.saveText}>Save&Submit</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.cancelButton} onPress={() => navigation.goBack()}>
+                  <Text style={styles.cancelText}>Cancel</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          ) : (
+            <View style={[
+              styles.messageBubble,
+              item.sender === 'user' ? styles.userBubble : styles.aiBubble
+            ]}>
+              <Text style={styles.messageText}>{item.text}</Text>
+            </View>
+          )
         )}
       />
 
-      {/* Stop Generating */}
-      {isGenerating && (
-        <TouchableOpacity style={styles.stopButton} onPress={() => setIsGenerating(false)}>
-          <Text style={styles.stopText}>⬛ Stop generating...</Text>
+      {/* Regenerate Button */}
+      {!isEditing && (
+        <TouchableOpacity style={styles.regenerateButton}>
+          <Text style={styles.regenerateText}>↻  Regenerate Response</Text>
         </TouchableOpacity>
       )}
-
-      {/* Regenerate Button */}
-{messages.length > 0 && !isGenerating && (
-  <TouchableOpacity
-    style={styles.regenerateButton}
-    onPress={() => {
-      setIsGenerating(true);
-      setTimeout(() => {
-        const aiMessage = {
-          id: Date.now().toString(),
-          text: 'This is a regenerated response. API integration coming soon!',
-          sender: 'ai'
-        };
-        setMessages(prev => [...prev, aiMessage]);
-        setIsGenerating(false);
-      }, 1500);
-    }}
-  >
-    <Text style={styles.regenerateText}>↻  Regenerate Response</Text>
-  </TouchableOpacity>
-)}
 
       {/* Input Bar */}
       <View style={styles.inputContainer}>
@@ -119,9 +86,8 @@ export default function HummelChatScreen({ navigation, route }) {
           placeholderTextColor="#aaa"
           value={input}
           onChangeText={setInput}
-          multiline
         />
-        <TouchableOpacity style={styles.sendButton} onPress={sendMessage}>
+        <TouchableOpacity style={styles.sendButton}>
           <Text style={styles.sendText}>›</Text>
         </TouchableOpacity>
       </View>
@@ -167,6 +133,42 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
     gap: 12,
   },
+  editContainer: {
+    backgroundColor: '#f5f5f5',
+    borderRadius: 16,
+    padding: 12,
+    gap: 8,
+  },
+  editInput: {
+    fontSize: 14,
+    color: '#000000',
+    lineHeight: 22,
+  },
+  editButtons: {
+    flexDirection: 'row',
+    gap: 8,
+  },
+  saveButton: {
+    backgroundColor: '#000000',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 20,
+  },
+  saveText: {
+    color: '#ffffff',
+    fontSize: 13,
+    fontWeight: '600',
+  },
+  cancelButton: {
+    backgroundColor: '#e0e0e0',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 20,
+  },
+  cancelText: {
+    color: '#000000',
+    fontSize: 13,
+  },
   messageBubble: {
     maxWidth: '80%',
     borderRadius: 16,
@@ -183,18 +185,6 @@ const styles = StyleSheet.create({
   messageText: {
     fontSize: 14,
     lineHeight: 22,
-    color: '#000000',
-  },
-  stopButton: {
-    alignSelf: 'center',
-    backgroundColor: '#f0f0f0',
-    paddingHorizontal: 24,
-    paddingVertical: 12,
-    borderRadius: 24,
-    marginBottom: 12,
-  },
-  stopText: {
-    fontSize: 14,
     color: '#000000',
   },
   regenerateButton: {
