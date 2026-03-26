@@ -3,12 +3,14 @@ import {
   View, Text, StyleSheet, TextInput,
   TouchableOpacity, FlatList, KeyboardAvoidingView, Platform
 } from 'react-native';
+import { useTheme } from '../theme/ThemeContext';
 
 export default function HummelChatEditScreen({ navigation, route }) {
+  const { theme } = useTheme();
   const initialMessage = route?.params?.message || 'Top 6 Movies With High Imdb';
   const [messages, setMessages] = useState([
     { id: '1', text: initialMessage, sender: 'user' },
-    { id: '2', text: 'As an AI, I don\'t have real-time access to IMDb\'s rankings, and my training only goes up until September 2021. However, I can provide you with a list of critically acclaimed movies that were highly rated at that time. Please note that opinions on the "best" movies can vary, and IMDb ratings may change over time. Here are ten highly regarded films as of September 2021.', sender: 'ai' },
+    { id: '2', text: 'As an AI, I don\'t have real-time access to IMDb\'s rankings, and my training only goes up until September 2021. However, I can provide you with a list of critically acclaimed movies that were highly rated at that time.', sender: 'ai' },
   ]);
   const [editText, setEditText] = useState(initialMessage);
   const [isEditing, setIsEditing] = useState(true);
@@ -23,20 +25,21 @@ export default function HummelChatEditScreen({ navigation, route }) {
 
   return (
     <KeyboardAvoidingView
-      style={styles.container}
+      style={[styles.container, { backgroundColor: theme.background }]}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
-      {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-          <Text style={styles.backText}>‹</Text>
+        <TouchableOpacity
+          style={[styles.backButton, { backgroundColor: theme.card }]}
+          onPress={() => navigation.goBack()}
+        >
+          <Text style={[styles.backText, { color: theme.text }]}>‹</Text>
         </TouchableOpacity>
         <TouchableOpacity>
-          <Text style={styles.menuDots}>•••</Text>
+          <Text style={[styles.menuDots, { color: theme.text }]}>•••</Text>
         </TouchableOpacity>
       </View>
 
-      {/* Messages */}
       <FlatList
         data={messages}
         keyExtractor={item => item.id}
@@ -44,51 +47,57 @@ export default function HummelChatEditScreen({ navigation, route }) {
         contentContainerStyle={styles.messagesContent}
         renderItem={({ item }) => (
           item.sender === 'user' && isEditing ? (
-            <View style={styles.editContainer}>
+            <View style={[styles.editContainer, { backgroundColor: theme.card }]}>
               <TextInput
-                style={styles.editInput}
+                style={[styles.editInput, { color: theme.text }]}
                 value={editText}
                 onChangeText={setEditText}
                 multiline
               />
               <View style={styles.editButtons}>
-                <TouchableOpacity style={styles.saveButton} onPress={handleSaveSubmit}>
-                  <Text style={styles.saveText}>Save&Submit</Text>
+                <TouchableOpacity
+                  style={[styles.saveButton, { backgroundColor: theme.buttonBg }]}
+                  onPress={handleSaveSubmit}
+                >
+                  <Text style={[styles.saveText, { color: theme.buttonText }]}>Save&Submit</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.cancelButton} onPress={() => navigation.goBack()}>
-                  <Text style={styles.cancelText}>Cancel</Text>
+                <TouchableOpacity
+                  style={[styles.cancelButton, { backgroundColor: theme.card }]}
+                  onPress={() => navigation.goBack()}
+                >
+                  <Text style={[styles.cancelText, { color: theme.text }]}>Cancel</Text>
                 </TouchableOpacity>
               </View>
             </View>
           ) : (
             <View style={[
               styles.messageBubble,
-              item.sender === 'user' ? styles.userBubble : styles.aiBubble
+              item.sender === 'user'
+                ? { backgroundColor: theme.card, alignSelf: 'flex-end' }
+                : { backgroundColor: theme.inputBg, alignSelf: 'flex-start' }
             ]}>
-              <Text style={styles.messageText}>{item.text}</Text>
+              <Text style={[styles.messageText, { color: theme.text }]}>{item.text}</Text>
             </View>
           )
         )}
       />
 
-      {/* Regenerate Button */}
       {!isEditing && (
-        <TouchableOpacity style={styles.regenerateButton}>
-          <Text style={styles.regenerateText}>↻  Regenerate Response</Text>
+        <TouchableOpacity style={[styles.regenerateButton, { backgroundColor: theme.card }]}>
+          <Text style={[styles.regenerateText, { color: theme.text }]}>↻  Regenerate Response</Text>
         </TouchableOpacity>
       )}
 
-      {/* Input Bar */}
-      <View style={styles.inputContainer}>
+      <View style={[styles.inputContainer, { borderTopColor: theme.border }]}>
         <TextInput
-          style={styles.input}
+          style={[styles.input, { backgroundColor: theme.inputBg, color: theme.text }]}
           placeholder="Send a message"
-          placeholderTextColor="#aaa"
+          placeholderTextColor={theme.subText}
           value={input}
           onChangeText={setInput}
         />
-        <TouchableOpacity style={styles.sendButton}>
-          <Text style={styles.sendText}>›</Text>
+        <TouchableOpacity style={[styles.sendButton, { backgroundColor: theme.card }]}>
+          <Text style={[styles.sendText, { color: theme.text }]}>›</Text>
         </TouchableOpacity>
       </View>
     </KeyboardAvoidingView>
@@ -96,10 +105,7 @@ export default function HummelChatEditScreen({ navigation, route }) {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#ffffff',
-  },
+  container: { flex: 1 },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -109,124 +115,32 @@ const styles = StyleSheet.create({
     paddingBottom: 16,
   },
   backButton: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: '#f0f0f0',
-    alignItems: 'center',
-    justifyContent: 'center',
+    width: 36, height: 36, borderRadius: 18,
+    alignItems: 'center', justifyContent: 'center',
   },
-  backText: {
-    fontSize: 24,
-    color: '#000000',
-  },
-  menuDots: {
-    fontSize: 16,
-    color: '#000000',
-    letterSpacing: 2,
-  },
-  messagesList: {
-    flex: 1,
-  },
-  messagesContent: {
-    paddingHorizontal: 24,
-    paddingVertical: 16,
-    gap: 12,
-  },
-  editContainer: {
-    backgroundColor: '#f5f5f5',
-    borderRadius: 16,
-    padding: 12,
-    gap: 8,
-  },
-  editInput: {
-    fontSize: 14,
-    color: '#000000',
-    lineHeight: 22,
-  },
-  editButtons: {
-    flexDirection: 'row',
-    gap: 8,
-  },
-  saveButton: {
-    backgroundColor: '#000000',
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 20,
-  },
-  saveText: {
-    color: '#ffffff',
-    fontSize: 13,
-    fontWeight: '600',
-  },
-  cancelButton: {
-    backgroundColor: '#e0e0e0',
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 20,
-  },
-  cancelText: {
-    color: '#000000',
-    fontSize: 13,
-  },
-  messageBubble: {
-    maxWidth: '80%',
-    borderRadius: 16,
-    padding: 12,
-  },
-  userBubble: {
-    alignSelf: 'flex-end',
-    backgroundColor: '#f0f0f0',
-  },
-  aiBubble: {
-    alignSelf: 'flex-start',
-    backgroundColor: '#f8f8f8',
-  },
-  messageText: {
-    fontSize: 14,
-    lineHeight: 22,
-    color: '#000000',
-  },
+  backText: { fontSize: 24 },
+  menuDots: { fontSize: 16, letterSpacing: 2 },
+  messagesList: { flex: 1 },
+  messagesContent: { paddingHorizontal: 24, paddingVertical: 16, gap: 12 },
+  editContainer: { borderRadius: 16, padding: 12, gap: 8 },
+  editInput: { fontSize: 14, lineHeight: 22 },
+  editButtons: { flexDirection: 'row', gap: 8 },
+  saveButton: { paddingHorizontal: 16, paddingVertical: 8, borderRadius: 20 },
+  saveText: { fontSize: 13, fontWeight: '600' },
+  cancelButton: { paddingHorizontal: 16, paddingVertical: 8, borderRadius: 20 },
+  cancelText: { fontSize: 13 },
+  messageBubble: { maxWidth: '80%', borderRadius: 16, padding: 12 },
+  messageText: { fontSize: 14, lineHeight: 22 },
   regenerateButton: {
-    alignSelf: 'center',
-    backgroundColor: '#f0f0f0',
-    paddingHorizontal: 24,
-    paddingVertical: 12,
-    borderRadius: 24,
-    marginBottom: 12,
+    alignSelf: 'center', paddingHorizontal: 24,
+    paddingVertical: 12, borderRadius: 24, marginBottom: 12,
   },
-  regenerateText: {
-    fontSize: 14,
-    color: '#000000',
-  },
+  regenerateText: { fontSize: 14 },
   inputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderTopWidth: 1,
-    borderTopColor: '#f0f0f0',
-    gap: 8,
+    flexDirection: 'row', alignItems: 'center',
+    paddingHorizontal: 16, paddingVertical: 12, borderTopWidth: 1, gap: 8,
   },
-  input: {
-    flex: 1,
-    backgroundColor: '#f5f5f5',
-    borderRadius: 24,
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    fontSize: 15,
-    color: '#000000',
-  },
-  sendButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: '#f0f0f0',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  sendText: {
-    fontSize: 24,
-    color: '#000000',
-  },
+  input: { flex: 1, borderRadius: 24, paddingHorizontal: 16, paddingVertical: 10, fontSize: 15 },
+  sendButton: { width: 40, height: 40, borderRadius: 20, alignItems: 'center', justifyContent: 'center' },
+  sendText: { fontSize: 24 },
 });

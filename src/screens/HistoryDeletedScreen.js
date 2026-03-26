@@ -3,6 +3,7 @@ import {
   View, Text, StyleSheet, TextInput,
   TouchableOpacity, ScrollView
 } from 'react-native';
+import { useTheme } from '../theme/ThemeContext';
 
 const historyData = {
   today: [
@@ -13,74 +14,80 @@ const historyData = {
   yesterday: [
     { id: '4', text: 'How Much Pushaps A day' },
     { id: '5', text: 'Top 10 Imdb Best Movies ever' },
-    { id: '6', text: 'Tell me what support I played daily fitness' },
+    { id: '6', text: 'How are you, friend? long time...', showDelete: true },
     { id: '7', text: 'Top 10 Imdb Best Movies ever' },
     { id: '8', text: 'Tell me what support I played daily fitness' },
   ],
 };
 
-export default function HistoryScreen({ navigation }) {
+export default function HistoryDeletedScreen({ navigation }) {
+  const { theme } = useTheme();
   const [search, setSearch] = useState('');
+  const [items, setItems] = useState(historyData);
+
+  const deleteItem = (id) => {
+    setItems(prev => ({
+      ...prev,
+      yesterday: prev.yesterday.filter(item => item.id !== id)
+    }));
+  };
 
   return (
-    <View style={styles.container}>
-      {/* Header */}
+    <View style={[styles.container, { backgroundColor: theme.background }]}>
       <View style={styles.header}>
-        <Text style={styles.title}>History</Text>
+        <Text style={[styles.title, { color: theme.text }]}>History</Text>
         <TouchableOpacity>
-          <Text style={styles.editIcon}>✏️</Text>
+          <Text style={{ fontSize: 20 }}>✏️</Text>
         </TouchableOpacity>
       </View>
 
-      {/* Search */}
-      <View style={styles.searchContainer}>
+      <View style={[styles.searchContainer, { backgroundColor: theme.card }]}>
         <Text style={styles.searchIcon}>🔍</Text>
         <TextInput
-          style={styles.searchInput}
+          style={[styles.searchInput, { color: theme.text }]}
           placeholder="Search..."
-          placeholderTextColor="#aaa"
+          placeholderTextColor={theme.subText}
           value={search}
           onChangeText={setSearch}
         />
       </View>
 
-      {/* History List */}
       <ScrollView style={styles.scrollView}>
-        <Text style={styles.sectionTitle}>Today</Text>
-        {historyData.today.map(item => (
+        <Text style={[styles.sectionTitle, { color: theme.text }]}>Today</Text>
+        {items.today.map(item => (
           <TouchableOpacity
             key={item.id}
-            style={styles.historyItem}
-            onPress={() => navigation.navigate('HummelChat', { initialMessage: item.text })}
-            onLongPress={() => navigation.navigate('HistoryDeleted')}
+            style={[styles.historyItem, { backgroundColor: theme.card }]}
           >
-            <Text style={styles.historyText}>{item.text}</Text>
+            <Text style={[styles.historyText, { color: theme.subText }]}>{item.text}</Text>
           </TouchableOpacity>
         ))}
 
-        <Text style={styles.sectionTitle}>Yesterday</Text>
-        {historyData.yesterday.map(item => (
+        <Text style={[styles.sectionTitle, { color: theme.text }]}>Yesterday</Text>
+        {items.yesterday.map(item => (
           <TouchableOpacity
             key={item.id}
-            style={styles.historyItem}
-            onPress={() => navigation.navigate('HummelChat', { initialMessage: item.text })}
-            onLongPress={() => navigation.navigate('HistoryDeleted')}
+            style={[styles.historyItem, { backgroundColor: theme.card }]}
           >
-            <Text style={styles.historyText}>{item.text}</Text>
+            {item.showDelete && (
+              <TouchableOpacity onPress={() => deleteItem(item.id)}>
+                <Text style={styles.deleteIcon}>🗑️</Text>
+              </TouchableOpacity>
+            )}
+            <Text style={[styles.historyText, { color: theme.subText }]}>{item.text}</Text>
           </TouchableOpacity>
         ))}
       </ScrollView>
 
-      {/* Bottom Navigation */}
-      <View style={styles.bottomNav}>
-        <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('HummelInstructions')}>
-          <Text style={styles.navIcon}>＋</Text>
+      <View style={[styles.bottomNav, { backgroundColor: theme.navBg, borderTopColor: theme.border }]}>
+        <TouchableOpacity onPress={() => navigation.navigate('HummelInstructions')}>
+          <Text style={[styles.navIcon, { color: theme.subText }]}>＋</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.navItem}>
-          <Text style={[styles.navIcon, styles.activeNav]}>🕐</Text>
+        <TouchableOpacity>
+          <Text style={[styles.navIcon, { color: theme.text }]}>🕐</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Profile')}>
-          <Text style={styles.navIcon}>👤</Text>
+        <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
+          <Text style={[styles.navIcon, { color: theme.subText }]}>👤</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -88,10 +95,7 @@ export default function HistoryScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#ffffff',
-  },
+  container: { flex: 1 },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -100,18 +104,10 @@ const styles = StyleSheet.create({
     paddingTop: 60,
     paddingBottom: 16,
   },
-  title: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: '#000000',
-  },
-  editIcon: {
-    fontSize: 20,
-  },
+  title: { fontSize: 28, fontWeight: 'bold' },
   searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#f5f5f5',
     borderRadius: 12,
     marginHorizontal: 24,
     paddingHorizontal: 16,
@@ -119,51 +115,21 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     gap: 8,
   },
-  searchIcon: {
-    fontSize: 16,
-  },
-  searchInput: {
-    flex: 1,
-    fontSize: 15,
-    color: '#000000',
-  },
-  scrollView: {
-    flex: 1,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#000000',
-    marginBottom: 12,
-    marginTop: 8,
-  },
+  searchIcon: { fontSize: 16 },
+  searchInput: { flex: 1, fontSize: 15 },
+  scrollView: { flex: 1, paddingHorizontal: 24 },
+  sectionTitle: { fontSize: 16, fontWeight: 'bold', marginBottom: 12, marginTop: 8 },
   historyItem: {
-    backgroundColor: '#f5f5f5',
-    borderRadius: 12,
-    padding: 14,
-    marginBottom: 8,
+    borderRadius: 12, padding: 14, marginBottom: 8,
+    flexDirection: 'row', alignItems: 'center', gap: 8,
   },
-  historyText: {
-    fontSize: 14,
-    color: '#555555',
-  },
+  deleteIcon: { fontSize: 16 },
+  historyText: { fontSize: 14, flex: 1 },
   bottomNav: {
     flexDirection: 'row',
     justifyContent: 'space-around',
     paddingVertical: 16,
     borderTopWidth: 1,
-    borderTopColor: '#f0f0f0',
   },
-  navItem: {
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  navIcon: {
-    fontSize: 22,
-    color: '#888888',
-  },
-  activeNav: {
-    color: '#000000',
-  },
+  navIcon: { fontSize: 22 },
 });
