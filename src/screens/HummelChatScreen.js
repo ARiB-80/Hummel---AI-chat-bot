@@ -4,9 +4,12 @@ import {
   TouchableOpacity, FlatList, KeyboardAvoidingView, Platform
 } from 'react-native';
 import { useTheme } from '../theme/ThemeContext';
+import { useDispatch } from 'react-redux';
+import { addMessage, saveConversation } from '../redux/chatSlice';
 
 export default function HummelChatScreen({ navigation, route }) {
   const { theme } = useTheme();
+  const dispatch = useDispatch();
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
@@ -20,6 +23,7 @@ export default function HummelChatScreen({ navigation, route }) {
         sender: 'user'
       };
       setMessages([userMessage]);
+      dispatch(addMessage(userMessage));
       setIsGenerating(true);
       setTimeout(() => {
         const aiMessage = {
@@ -28,6 +32,7 @@ export default function HummelChatScreen({ navigation, route }) {
           sender: 'ai'
         };
         setMessages(prev => [...prev, aiMessage]);
+        dispatch(addMessage(aiMessage));
         setIsGenerating(false);
       }, 1500);
     }
@@ -41,6 +46,7 @@ export default function HummelChatScreen({ navigation, route }) {
       sender: 'user'
     };
     setMessages(prev => [...prev, userMessage]);
+    dispatch(addMessage(userMessage));
     setInput('');
     setIsGenerating(true);
     setTimeout(() => {
@@ -50,8 +56,19 @@ export default function HummelChatScreen({ navigation, route }) {
         sender: 'ai'
       };
       setMessages(prev => [...prev, aiMessage]);
+      dispatch(addMessage(aiMessage));
       setIsGenerating(false);
     }, 1500);
+  };
+
+  const handleBack = () => {
+    if (messages.length > 0) {
+      dispatch(saveConversation({
+        title: messages[0].text,
+        messages: messages,
+      }));
+    }
+    navigation.goBack();
   };
 
   return (
@@ -62,7 +79,7 @@ export default function HummelChatScreen({ navigation, route }) {
       <View style={styles.header}>
         <TouchableOpacity
           style={[styles.backButton, { backgroundColor: theme.card }]}
-          onPress={() => navigation.goBack()}
+          onPress={handleBack}
         >
           <Text style={[styles.backText, { color: theme.text }]}>‹</Text>
         </TouchableOpacity>
@@ -121,6 +138,7 @@ export default function HummelChatScreen({ navigation, route }) {
                 sender: 'ai'
               };
               setMessages(prev => [...prev, aiMessage]);
+              dispatch(addMessage(aiMessage));
               setIsGenerating(false);
             }, 1500);
           }}

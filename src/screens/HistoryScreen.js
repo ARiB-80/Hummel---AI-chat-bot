@@ -4,25 +4,21 @@ import {
   TouchableOpacity, ScrollView
 } from 'react-native';
 import { useTheme } from '../theme/ThemeContext';
-
-const historyData = {
-  today: [
-    { id: '1', text: 'How Much Pushaps A day' },
-    { id: '2', text: 'Top 10 Imdb Best Movies ever' },
-    { id: '3', text: 'Tell me what support I played daily fitness' },
-  ],
-  yesterday: [
-    { id: '4', text: 'How Much Pushaps A day' },
-    { id: '5', text: 'Top 10 Imdb Best Movies ever' },
-    { id: '6', text: 'Tell me what support I played daily fitness' },
-    { id: '7', text: 'Top 10 Imdb Best Movies ever' },
-    { id: '8', text: 'Tell me what support I played daily fitness' },
-  ],
-};
+import { useSelector, useDispatch } from 'react-redux';
+import { deleteConversation } from '../redux/chatSlice';
 
 export default function HistoryScreen({ navigation }) {
   const { theme } = useTheme();
   const [search, setSearch] = useState('');
+  const dispatch = useDispatch();
+  const conversations = useSelector(state => state.chat.conversations);
+
+  const filtered = conversations.filter(conv =>
+    conv.title.toLowerCase().includes(search.toLowerCase())
+  );
+
+  const today = filtered.filter(conv => conv.date === new Date().toLocaleDateString());
+  const older = filtered.filter(conv => conv.date !== new Date().toLocaleDateString());
 
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
@@ -45,29 +41,43 @@ export default function HistoryScreen({ navigation }) {
       </View>
 
       <ScrollView style={styles.scrollView}>
-        <Text style={[styles.sectionTitle, { color: theme.text }]}>Today</Text>
-        {historyData.today.map(item => (
-          <TouchableOpacity
-            key={item.id}
-            style={[styles.historyItem, { backgroundColor: theme.card }]}
-            onPress={() => navigation.navigate('HummelChat', { initialMessage: item.text })}
-            onLongPress={() => navigation.navigate('HistoryDeleted')}
-          >
-            <Text style={[styles.historyText, { color: theme.subText }]}>{item.text}</Text>
-          </TouchableOpacity>
-        ))}
+        {today.length > 0 && (
+          <>
+            <Text style={[styles.sectionTitle, { color: theme.text }]}>Today</Text>
+            {today.map(conv => (
+              <TouchableOpacity
+                key={conv.id}
+                style={[styles.historyItem, { backgroundColor: theme.card }]}
+                onPress={() => navigation.navigate('HummelChat', { initialMessage: conv.title })}
+                onLongPress={() => dispatch(deleteConversation(conv.id))}
+              >
+                <Text style={[styles.historyText, { color: theme.subText }]}>{conv.title}</Text>
+              </TouchableOpacity>
+            ))}
+          </>
+        )}
 
-        <Text style={[styles.sectionTitle, { color: theme.text }]}>Yesterday</Text>
-        {historyData.yesterday.map(item => (
-          <TouchableOpacity
-            key={item.id}
-            style={[styles.historyItem, { backgroundColor: theme.card }]}
-            onPress={() => navigation.navigate('HummelChat', { initialMessage: item.text })}
-            onLongPress={() => navigation.navigate('HistoryDeleted')}
-          >
-            <Text style={[styles.historyText, { color: theme.subText }]}>{item.text}</Text>
-          </TouchableOpacity>
-        ))}
+        {older.length > 0 && (
+          <>
+            <Text style={[styles.sectionTitle, { color: theme.text }]}>Older</Text>
+            {older.map(conv => (
+              <TouchableOpacity
+                key={conv.id}
+                style={[styles.historyItem, { backgroundColor: theme.card }]}
+                onPress={() => navigation.navigate('HummelChat', { initialMessage: conv.title })}
+                onLongPress={() => dispatch(deleteConversation(conv.id))}
+              >
+                <Text style={[styles.historyText, { color: theme.subText }]}>{conv.title}</Text>
+              </TouchableOpacity>
+            ))}
+          </>
+        )}
+
+        {filtered.length === 0 && (
+          <Text style={[styles.emptyText, { color: theme.subText }]}>
+            No conversations yet!{'\n'}Start chatting to see history here.
+          </Text>
+        )}
       </ScrollView>
 
       <View style={[styles.bottomNav, { backgroundColor: theme.navBg, borderTopColor: theme.border }]}>
@@ -112,6 +122,7 @@ const styles = StyleSheet.create({
   sectionTitle: { fontSize: 16, fontWeight: 'bold', marginBottom: 12, marginTop: 8 },
   historyItem: { borderRadius: 12, padding: 14, marginBottom: 8 },
   historyText: { fontSize: 14 },
+  emptyText: { textAlign: 'center', marginTop: 40, fontSize: 15, lineHeight: 26 },
   bottomNav: {
     flexDirection: 'row',
     justifyContent: 'space-around',
