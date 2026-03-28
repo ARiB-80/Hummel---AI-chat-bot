@@ -1,12 +1,38 @@
 import React from 'react';
 import {
   View, Text, StyleSheet, Image,
-  TouchableOpacity, Switch
+  TouchableOpacity, Switch, Alert
 } from 'react-native';
 import { useTheme } from '../theme/ThemeContext';
+import { auth } from '../firebase/firebaseConfig';
+import { signOut } from 'firebase/auth';
 
 export default function ProfileScreen({ navigation }) {
   const { theme, isDark, toggleTheme } = useTheme();
+
+  const handleLogout = async () => {
+    Alert.alert(
+      'Logout',
+      'Are you sure you want to logout?',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Logout',
+          onPress: async () => {
+            try {
+              await signOut(auth);
+              navigation.reset({
+                index: 0,
+                routes: [{ name: 'Welcome' }],
+              });
+            } catch (error) {
+              Alert.alert('Error', error.message);
+            }
+          }
+        }
+      ]
+    );
+  };
 
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
@@ -31,8 +57,12 @@ export default function ProfileScreen({ navigation }) {
           />
           <View style={styles.onlineDot} />
         </View>
-        <Text style={[styles.name, { color: theme.text }]}>Tom Hillson</Text>
-        <Text style={[styles.email, { color: theme.subText }]}>Tomhill@mail.com</Text>
+        <Text style={[styles.name, { color: theme.text }]}>
+          {auth.currentUser?.email?.split('@')[0] || 'User'}
+        </Text>
+        <Text style={[styles.email, { color: theme.subText }]}>
+          {auth.currentUser?.email || ''}
+        </Text>
       </View>
 
       {/* Options */}
@@ -48,10 +78,7 @@ export default function ProfileScreen({ navigation }) {
           />
         </View>
 
-        <TouchableOpacity
-          style={styles.optionRow}
-          onPress={() => navigation.navigate('Welcome')}
-        >
+        <TouchableOpacity style={styles.optionRow} onPress={handleLogout}>
           <Text style={styles.optionIcon}>→</Text>
           <Text style={[styles.optionText, { color: theme.text }]}>Logout</Text>
         </TouchableOpacity>
@@ -74,9 +101,7 @@ export default function ProfileScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
+  container: { flex: 1 },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -86,79 +111,32 @@ const styles = StyleSheet.create({
     paddingBottom: 16,
   },
   backButton: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    alignItems: 'center',
-    justifyContent: 'center',
+    width: 36, height: 36, borderRadius: 18,
+    alignItems: 'center', justifyContent: 'center',
   },
-  backText: {
-    fontSize: 24,
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-  },
-  profileContainer: {
-    alignItems: 'center',
-    paddingVertical: 30,
-  },
-  avatarContainer: {
-    position: 'relative',
-    marginBottom: 16,
-  },
-  avatar: {
-    width: 90,
-    height: 90,
-    borderRadius: 45,
-  },
+  backText: { fontSize: 24 },
+  title: { fontSize: 20, fontWeight: 'bold' },
+  profileContainer: { alignItems: 'center', paddingVertical: 30 },
+  avatarContainer: { position: 'relative', marginBottom: 16 },
+  avatar: { width: 90, height: 90, borderRadius: 45 },
   onlineDot: {
-    position: 'absolute',
-    bottom: 2,
-    right: 2,
-    width: 14,
-    height: 14,
-    borderRadius: 7,
-    backgroundColor: '#00cc44',
-    borderWidth: 2,
-    borderColor: '#ffffff',
+    position: 'absolute', bottom: 2, right: 2,
+    width: 14, height: 14, borderRadius: 7,
+    backgroundColor: '#00cc44', borderWidth: 2, borderColor: '#ffffff',
   },
-  name: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    marginBottom: 4,
-  },
-  email: {
-    fontSize: 14,
-  },
-  optionsContainer: {
-    paddingHorizontal: 24,
-    gap: 8,
-  },
+  name: { fontSize: 22, fontWeight: 'bold', marginBottom: 4 },
+  email: { fontSize: 14 },
+  optionsContainer: { paddingHorizontal: 24, gap: 8 },
   optionRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 16,
-    gap: 12,
+    flexDirection: 'row', alignItems: 'center',
+    paddingVertical: 16, gap: 12,
   },
-  optionIcon: {
-    fontSize: 20,
-  },
-  optionText: {
-    flex: 1,
-    fontSize: 16,
-  },
+  optionIcon: { fontSize: 20 },
+  optionText: { flex: 1, fontSize: 16 },
   bottomNav: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    paddingVertical: 16,
-    borderTopWidth: 1,
+    position: 'absolute', bottom: 0, left: 0, right: 0,
+    flexDirection: 'row', justifyContent: 'space-around',
+    paddingVertical: 16, borderTopWidth: 1,
   },
-  navIcon: {
-    fontSize: 22,
-  },
+  navIcon: { fontSize: 22 },
 });

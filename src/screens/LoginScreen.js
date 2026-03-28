@@ -1,12 +1,31 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, Alert } from 'react-native';
 import { useTheme } from '../theme/ThemeContext';
+import { auth } from '../firebase/firebaseConfig';
+import { signInWithEmailAndPassword } from 'firebase/auth';
 
 export default function LoginScreen({ navigation }) {
   const { theme } = useTheme();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const handleLogin = async () => {
+    if (!email || !password) {
+      Alert.alert('Error', 'Please fill in all fields!');
+      return;
+    }
+    try {
+      setLoading(true);
+      await signInWithEmailAndPassword(auth, email, password);
+      navigation.navigate('WelcomeHome');
+    } catch (error) {
+      Alert.alert('Error', error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
@@ -24,11 +43,12 @@ export default function LoginScreen({ navigation }) {
           <Text style={styles.inputIcon}>✉</Text>
           <TextInput
             style={[styles.input, { color: theme.text }]}
-            placeholder="JosephRen@Mail.Com"
+            placeholder="Enter Your Email"
             placeholderTextColor={theme.subText}
             value={email}
             onChangeText={setEmail}
             keyboardType="email-address"
+            autoCapitalize="none"
           />
         </View>
 
@@ -53,9 +73,12 @@ export default function LoginScreen({ navigation }) {
 
         <TouchableOpacity
           style={[styles.loginButton, { backgroundColor: theme.buttonBg }]}
-          onPress={() => navigation.navigate('WelcomeHome')}
+          onPress={handleLogin}
+          disabled={loading}
         >
-          <Text style={[styles.loginText, { color: theme.buttonText }]}>Login</Text>
+          <Text style={[styles.loginText, { color: theme.buttonText }]}>
+            {loading ? 'Logging in...' : 'Login'}
+          </Text>
         </TouchableOpacity>
 
         <View style={styles.signupRow}>

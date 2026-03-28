@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, Alert } from 'react-native';
 import { useTheme } from '../theme/ThemeContext';
+import { auth } from '../firebase/firebaseConfig';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
 
 export default function RegisterScreen({ navigation }) {
   const { theme } = useTheme();
@@ -8,6 +10,23 @@ export default function RegisterScreen({ navigation }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const handleRegister = async () => {
+    if (!email || !password || !name) {
+      Alert.alert('Error', 'Please fill in all fields!');
+      return;
+    }
+    try {
+      setLoading(true);
+      await createUserWithEmailAndPassword(auth, email, password);
+      navigation.navigate('WelcomeHome');
+    } catch (error) {
+      Alert.alert('Error', error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
@@ -41,6 +60,7 @@ export default function RegisterScreen({ navigation }) {
             value={email}
             onChangeText={setEmail}
             keyboardType="email-address"
+            autoCapitalize="none"
           />
         </View>
 
@@ -61,9 +81,12 @@ export default function RegisterScreen({ navigation }) {
 
         <TouchableOpacity
           style={[styles.registerButton, { backgroundColor: theme.buttonBg }]}
-          onPress={() => navigation.navigate('WelcomeHome')}
+          onPress={handleRegister}
+          disabled={loading}
         >
-          <Text style={[styles.registerText, { color: theme.buttonText }]}>Register</Text>
+          <Text style={[styles.registerText, { color: theme.buttonText }]}>
+            {loading ? 'Creating Account...' : 'Register'}
+          </Text>
         </TouchableOpacity>
 
         <View style={styles.loginRow}>
