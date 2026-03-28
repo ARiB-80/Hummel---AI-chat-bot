@@ -3,13 +3,13 @@ import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { useTheme } from '../theme/ThemeContext';
 
 export default function OnboardingScreen({ navigation }) {
-  const { theme } = useTheme();
+  const { theme, isDark } = useTheme();
 
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
       <View style={styles.imageContainer}>
         <Image
-          source={require('../../assets/robot.jpeg')}
+          source={isDark ? require('../../assets/robot.jpeg') : require('../../assets/robot-light.jpg')}
           style={styles.image}
         />
       </View>
@@ -22,9 +22,6 @@ export default function OnboardingScreen({ navigation }) {
       </View>
 
       <View style={styles.buttonContainer}>
-        <TouchableOpacity style={[styles.arrowButton, { backgroundColor: theme.card }]}>
-          <Text style={[styles.arrowText, { color: theme.text }]}>←</Text>
-        </TouchableOpacity>
         <TouchableOpacity
           style={[styles.arrowButton, { backgroundColor: theme.card }]}
           onPress={() => navigation.replace('Welcome')}
@@ -39,20 +36,21 @@ export default function OnboardingScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1, alignItems: 'center',
-    justifyContent: 'space-between', paddingVertical: 40,
+    justifyContent: 'space-between', paddingVertical: 43,
   },
   imageContainer: {
-    width: '90%', height: 430,
+    width: '80%', height: 450,
     borderRadius: 30, overflow: 'hidden',
+    marginBottom: -40,
   },
-  image: { width: '100%', height: '100%', resizeMode: 'cover' },
+  image: { width: '100%', height: '80%', resizeMode: 'contain' },
   textContainer: { alignItems: 'center', paddingHorizontal: 30 },
-  title: { fontSize: 28, fontWeight: 'bold', textAlign: 'center', marginBottom: 12 },
-  subtitle: { fontSize: 14, textAlign: 'center', lineHeight: 22 },
-  buttonContainer: { flexDirection: 'row', gap: 16 },
+  title: { fontSize: 28, fontWeight: 'bold', textAlign: 'center', marginBottom: 10 },
+  subtitle: { fontSize: 14, textAlign: 'center', lineHeight: 18 },
+  buttonContainer: { flexDirection: 'row', gap: 18 },
   arrowButton: {
     width: 48, height: 48, borderRadius: 24,
     alignItems: 'center', justifyContent: 'center',
   },
-  arrowText: { fontSize: 20 },
+  arrowText: { fontSize: 22 },
 });

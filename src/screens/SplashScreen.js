@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, Image } from 'react-native';
 import { useTheme } from '../theme/ThemeContext';
 
 export default function SplashScreen({ navigation }) {
-  const { theme } = useTheme();
+  const { theme, isDark } = useTheme();
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -16,7 +16,7 @@ export default function SplashScreen({ navigation }) {
     <View style={[styles.container, { backgroundColor: theme.background }]}>
       <View style={styles.logoContainer}>
         <Image
-          source={require('../../assets/icon.png')}
+          source={isDark ? require('../../assets/logo-white.jpeg') : require('../../assets/logo-dark.jpeg')}
           style={styles.logo}
         />
       </View>
@@ -33,14 +33,12 @@ const styles = StyleSheet.create({
   logoContainer: {
     position: 'absolute',
     top: 0, left: 0, right: 0, bottom: 0,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: 'center', justifyContent: 'center',
   },
-  logo: { width: 320, height: 320, resizeMode: 'contain' },
+  logo: { width: 350, height: 350, resizeMode: 'contain' },
   bottomContainer: {
     position: 'absolute',
-    bottom: 50, left: 0, right: 0,
-    alignItems: 'center',
+    bottom: 50, left: 0, right: 0, alignItems: 'center',
   },
   appName: { fontSize: 26, fontWeight: 'bold', letterSpacing: -1 },
   version: { fontSize: 14, marginTop: 2 },

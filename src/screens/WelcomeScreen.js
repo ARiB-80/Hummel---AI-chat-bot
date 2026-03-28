@@ -3,13 +3,13 @@ import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { useTheme } from '../theme/ThemeContext';
 
 export default function WelcomeScreen({ navigation }) {
-  const { theme } = useTheme();
+  const { theme, isDark } = useTheme();
 
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
       <View style={styles.topContainer}>
         <Image
-          source={require('../../assets/icon.png')}
+          source={isDark ? require('../../assets/logo-white.jpeg') : require('../../assets/logo-dark.jpeg')}
           style={styles.logo}
         />
         <Text style={[styles.title, { color: theme.text }]}>Welcome to{'\n'}Hummel</Text>
@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center', paddingHorizontal: 30,
   },
   topContainer: { alignItems: 'center', marginBottom: 60 },
-  logo: { width: 300, height: 300, resizeMode: 'contain', marginBottom: -40 },
+  logo: { width: 350, height: 350, resizeMode: 'contain', marginBottom: -30 },
   title: { fontSize: 26, fontWeight: 'bold', textAlign: 'center', lineHeight: 32 },
   buttonContainer: { width: '100%', gap: 12 },
   loginButton: { paddingVertical: 16, borderRadius: 50, alignItems: 'center' },

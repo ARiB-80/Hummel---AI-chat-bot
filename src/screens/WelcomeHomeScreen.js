@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { useTheme } from '../theme/ThemeContext';
 
 export default function WelcomeHomeScreen({ navigation }) {
-  const { theme } = useTheme();
+  const { theme, isDark } = useTheme();
 
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
@@ -16,7 +16,7 @@ export default function WelcomeHomeScreen({ navigation }) {
 
       <View style={styles.centerContainer}>
         <Image
-          source={require('../../assets/icon.png')}
+          source={isDark ? require('../../assets/logo-white.jpeg') : require('../../assets/logo-dark.jpeg')}
           style={styles.logo}
         />
         <Text style={[styles.title, { color: theme.text }]}>Welcome to{'\n'}Hummel</Text>
@@ -48,16 +48,14 @@ export default function WelcomeHomeScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, paddingHorizontal: 24, paddingTop: 60 },
+  container: { flex: 1, paddingHorizontal: 24, paddingTop: 30 },
   backButton: {
     width: 36, height: 36, borderRadius: 18,
     alignItems: 'center', justifyContent: 'center', marginBottom: 30,
   },
   backText: { fontSize: 24 },
-  centerContainer: {
-    flex: 1, alignItems: 'center', justifyContent: 'center',
-  },
-  logo: { width: 60, height: 60, resizeMode: 'contain', marginBottom: 24 },
+  centerContainer: { flex: 3, alignItems: 'center', justifyContent: 'center' },
+  logo: { width: 300, height:300, resizeMode: 'contain', marginBottom: -70 },
   title: {
     fontSize: 28, fontWeight: 'bold',
     textAlign: 'center', lineHeight: 38, marginBottom: 12,
