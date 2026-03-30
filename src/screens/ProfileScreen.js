@@ -1,7 +1,7 @@
 import React from 'react';
 import {
   View, Text, StyleSheet, Image,
-  TouchableOpacity, Switch, Alert
+  TouchableOpacity, Alert
 } from 'react-native';
 import { useTheme } from '../theme/ThemeContext';
 import { auth } from '../firebase/firebaseConfig';
@@ -70,12 +70,14 @@ export default function ProfileScreen({ navigation }) {
         <View style={styles.optionRow}>
           <Text style={styles.optionIcon}>🌙</Text>
           <Text style={[styles.optionText, { color: theme.text }]}>Dark Mode</Text>
-          <Switch
-            value={isDark}
-            onValueChange={toggleTheme}
-            trackColor={{ false: '#e0e0e0', true: '#000000' }}
-            thumbColor={'#ffffff'}
-          />
+          <TouchableOpacity
+            style={[styles.toggle, { backgroundColor: isDark ? '#000000' : '#e0e0e0' }]}
+            onPress={toggleTheme}
+          >
+            <View style={[styles.toggleCircle, {
+              alignSelf: isDark ? 'flex-end' : 'flex-start'
+            }]} />
+          </TouchableOpacity>
         </View>
 
         <TouchableOpacity style={styles.optionRow} onPress={handleLogout}>
@@ -133,6 +135,16 @@ const styles = StyleSheet.create({
   },
   optionIcon: { fontSize: 20 },
   optionText: { flex: 1, fontSize: 16 },
+  toggle: {
+    width: 50, height: 28,
+    borderRadius: 14, padding: 2,
+    justifyContent: 'center',
+  },
+  toggleCircle: {
+    width: 24, height: 24,
+    borderRadius: 12,
+    backgroundColor: '#ffffff',
+  },
   bottomNav: {
     position: 'absolute', bottom: 0, left: 0, right: 0,
     flexDirection: 'row', justifyContent: 'space-around',
