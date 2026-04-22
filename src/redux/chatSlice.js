@@ -14,12 +14,14 @@ const chatSlice = createSlice({
       state.currentMessages = [];
     },
     saveConversation: (state, action) => {
-      state.conversations.push({
-        id: Date.now().toString(),
-        title: action.payload.title,
-        messages: action.payload.messages,
-        date: new Date().toLocaleDateString(),
-      });
+      const { id, title, messages } = action.payload;
+      const existing = state.conversations.findIndex(c => c.id === id);
+      const conversation = { id, title, messages, date: new Date().toLocaleDateString() };
+      if (existing >= 0) {
+        state.conversations[existing] = conversation;
+      } else {
+        state.conversations.unshift(conversation);
+      }
     },
     deleteConversation: (state, action) => {
       state.conversations = state.conversations.filter(

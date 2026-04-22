@@ -1,4 +1,7 @@
-import React, { createContext, useState, useContext } from 'react';
+import React, { createContext, useState, useContext, useEffect } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+const THEME_KEY = 'hummel_theme_dark';
 
 const ThemeContext = createContext();
 
@@ -28,10 +31,26 @@ export const darkTheme = {
 
 export const ThemeProvider = ({ children }) => {
   const [isDark, setIsDark] = useState(false);
+  const [loaded, setLoaded] = useState(false);
 
-  const toggleTheme = () => setIsDark(prev => !prev);
+  useEffect(() => {
+    AsyncStorage.getItem(THEME_KEY).then(value => {
+      if (value === 'true') setIsDark(true);
+      setLoaded(true);
+    });
+  }, []);
+
+  const toggleTheme = () => {
+    setIsDark(prev => {
+      const next = !prev;
+      AsyncStorage.setItem(THEME_KEY, String(next));
+      return next;
+    });
+  };
 
   const theme = isDark ? darkTheme : lightTheme;
+
+  if (!loaded) return null;
 
   return (
     <ThemeContext.Provider value={{ theme, isDark, toggleTheme }}>

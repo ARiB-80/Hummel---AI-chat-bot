@@ -1,35 +1,25 @@
-import { configureStore } from '@reduxjs/toolkit';
-import chatReducer from './chatSlice';
-import userReducer from './userSlice';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { createSlice } from '@reduxjs/toolkit';
 
-export const saveState = async (state) => {
-  try {
-    const serializedState = JSON.stringify(state);
-    await AsyncStorage.setItem('hummelState', serializedState);
-  } catch (error) {
-    console.error('Error saving state:', error);
-  }
-};
-
-export const loadState = async () => {
-  try {
-    const serializedState = await AsyncStorage.getItem('hummelState');
-    if (serializedState === null) return undefined;
-    return JSON.parse(serializedState);
-  } catch (error) {
-    console.error('Error loading state:', error);
-    return undefined;
-  }
-};
-
-export const store = configureStore({
-  reducer: {
-    chat: chatReducer,
-    user: userReducer,
+const userSlice = createSlice({
+  name: 'user',
+  initialState: {
+    uid: null,
+    email: null,
+    displayName: null,
+  },
+  reducers: {
+    setUser: (state, action) => {
+      state.uid = action.payload.uid;
+      state.email = action.payload.email;
+      state.displayName = action.payload.displayName ?? null;
+    },
+    clearUser: (state) => {
+      state.uid = null;
+      state.email = null;
+      state.displayName = null;
+    },
   },
 });
 
-store.subscribe(() => {
-  saveState(store.getState());
-});
+export const { setUser, clearUser } = userSlice.actions;
+export default userSlice.reducer;

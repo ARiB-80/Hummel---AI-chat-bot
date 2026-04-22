@@ -19,7 +19,7 @@ export default function LoginScreen({ navigation }) {
     try {
       setLoading(true);
       await signInWithEmailAndPassword(auth, email, password);
-      navigation.navigate('WelcomeHome');
+      navigation.navigate('MainTabs');
     } catch (error) {
       Alert.alert('Error', error.message);
     } finally {

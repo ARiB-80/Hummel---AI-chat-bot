@@ -36,19 +36,12 @@ export default function ProfileScreen({ navigation }) {
 
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
-      {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity
-          style={[styles.backButton, { backgroundColor: theme.card }]}
-          onPress={() => navigation.goBack()}
-        >
-          <Text style={[styles.backText, { color: theme.text }]}>‹</Text>
-        </TouchableOpacity>
+        <View style={{ width: 36 }} />
         <Text style={[styles.title, { color: theme.text }]}>Profile</Text>
         <View style={{ width: 36 }} />
       </View>
 
-      {/* Profile Info */}
       <View style={styles.profileContainer}>
         <View style={styles.avatarContainer}>
           <Image
@@ -65,7 +58,6 @@ export default function ProfileScreen({ navigation }) {
         </Text>
       </View>
 
-      {/* Options */}
       <View style={styles.optionsContainer}>
         <View style={styles.optionRow}>
           <Text style={styles.optionIcon}>🌙</Text>
@@ -85,19 +77,6 @@ export default function ProfileScreen({ navigation }) {
           <Text style={[styles.optionText, { color: theme.text }]}>Logout</Text>
         </TouchableOpacity>
       </View>
-
-      {/* Bottom Navigation */}
-      <View style={[styles.bottomNav, { backgroundColor: theme.navBg, borderTopColor: theme.border }]}>
-        <TouchableOpacity onPress={() => navigation.navigate('HummelInstructions')}>
-          <Text style={[styles.navIcon, { color: theme.subText }]}>＋</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.navigate('History')}>
-          <Text style={[styles.navIcon, { color: theme.subText }]}>🕐</Text>
-        </TouchableOpacity>
-        <TouchableOpacity>
-          <Text style={[styles.navIcon, { color: theme.text }]}>👤</Text>
-        </TouchableOpacity>
-      </View>
     </View>
   );
 }
@@ -112,11 +91,6 @@ const styles = StyleSheet.create({
     paddingTop: 60,
     paddingBottom: 16,
   },
-  backButton: {
-    width: 36, height: 36, borderRadius: 18,
-    alignItems: 'center', justifyContent: 'center',
-  },
-  backText: { fontSize: 24 },
   title: { fontSize: 20, fontWeight: 'bold' },
   profileContainer: { alignItems: 'center', paddingVertical: 30 },
   avatarContainer: { position: 'relative', marginBottom: 16 },
@@ -145,10 +119,4 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     backgroundColor: '#ffffff',
   },
-  bottomNav: {
-    position: 'absolute', bottom: 0, left: 0, right: 0,
-    flexDirection: 'row', justifyContent: 'space-around',
-    paddingVertical: 16, borderTopWidth: 1,
-  },
-  navIcon: { fontSize: 22 },
 });

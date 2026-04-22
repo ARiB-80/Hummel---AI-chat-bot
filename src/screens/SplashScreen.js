@@ -1,13 +1,22 @@
 import React, { useEffect } from 'react';
 import { View, Text, StyleSheet, Image } from 'react-native';
 import { useTheme } from '../theme/ThemeContext';
+import { onAuthStateChanged } from 'firebase/auth';
+import { auth } from '../firebase/firebaseConfig';
 
 export default function SplashScreen({ navigation }) {
   const { theme, isDark } = useTheme();
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      navigation.replace('Onboarding');
+      const unsubscribe = onAuthStateChanged(auth, user => {
+        unsubscribe();
+        if (user) {
+          navigation.replace('MainTabs');
+        } else {
+          navigation.replace('Onboarding');
+        }
+      });
     }, 3000);
     return () => clearTimeout(timer);
   }, []);

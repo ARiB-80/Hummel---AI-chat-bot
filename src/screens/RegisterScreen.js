@@ -20,7 +20,7 @@ export default function RegisterScreen({ navigation }) {
     try {
       setLoading(true);
       await createUserWithEmailAndPassword(auth, email, password);
-      navigation.navigate('WelcomeHome');
+      navigation.navigate('MainTabs');
     } catch (error) {
       Alert.alert('Error', error.message);
     } finally {
