@@ -4,7 +4,9 @@
       "Bash(npx create-expo-app@latest:*)",
       "Bash(mv hummel-app/* .)",
       "Bash(mv hummel-app/.* .)",
-      "Bash(rm -rf hummel-app)"
+      "Bash(rm -rf hummel-app)",
+      "Bash(pip install *)",
+      "Bash(python *)"
     ]
   }
 }
